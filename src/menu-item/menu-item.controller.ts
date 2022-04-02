@@ -10,8 +10,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MenuItem } from '@prisma/client';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { MenuItemService } from './menu-item.service';
 
 @Controller()
@@ -65,6 +67,7 @@ export class MenuItemController {
     return searchedItems;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('menu')
   @HttpCode(HttpStatus.CREATED)
   async createMenuItem(@Body() menuItemData: MenuItem): Promise<void> {
@@ -85,6 +88,7 @@ export class MenuItemController {
     this.menuItemService.createMenuItem(menuItemData);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('menu/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateMenuItem(
@@ -127,6 +131,7 @@ export class MenuItemController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('menu/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeMenuItem(@Param('id') id: string): Promise<void> {

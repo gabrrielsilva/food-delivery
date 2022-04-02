@@ -19,13 +19,14 @@
 
 **Requisitos funcionais:**
 
-- Cadastro e autenticação de usuários, com validação através de e-mail ou conta Google;
-- Exibir cardápio;
+- Autenticação de administrador ✔
+- Cadastro e autenticação de clientes, com validação através de e-mail ou conta Google;
+- Exibir cardápio; ✔
 - Calcular frete e tempo previsto de entrega;
 - Gerenciamento de sacola;
 - Escolher método e/ou fazer pagamento;
 - Realizar pedido;
-- Gerenciar cardápio;
+- Gerenciar cardápio; ✔
 - Gerenciar pedidos;
 - Exibir progresso do pedido.
 

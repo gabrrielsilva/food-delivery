@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model UserAdmin {
+  id        String  @default(uuid()) @id
+  username  String  @unique
+  password  String
+}
+
 model MenuItem {
   id          Int       @default(autoincrement()) @id
   title       String    @unique
