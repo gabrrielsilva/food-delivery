@@ -1,5 +1,5 @@
 {
-  "name": "pizza-em-dobro",
+  "name": "food-delivery",
   "version": "0.0.1",
   "description": "",
   "author": "Gabriel Silva",
@@ -9,7 +9,6 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -27,12 +26,14 @@
     "@prisma/client": "^3.11.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
+    "email-validator": "^2.0.4",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "validate-phone-number-node-js": "^0.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

@@ -5,7 +5,6 @@ import * as dotenv from 'dotenv';
 import { PrismaService } from 'src/prisma.service';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
 
 dotenv.config();
 
@@ -18,6 +17,6 @@ dotenv.config();
     }),
   ],
   exports: [AuthService],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, PrismaService, JwtStrategy],
 })
 export class AuthModule {}

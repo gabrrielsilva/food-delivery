@@ -7,10 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserAdmin {
-  id        String  @default(uuid()) @id
-  username  String  @unique
-  password  String
+model User {
+  id                String  @default(uuid()) @id
+  email             String  @unique
+  username          String
+  password          String
+  address           String
+  phoneNumber       Int     @unique
+  profilePictureUrl String?
+  isAdmin           Boolean @default(false)
 }
 
 model MenuItem {
