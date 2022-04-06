@@ -43,17 +43,11 @@ model MenuItem {
 }
 
 model Order {
-  id          Int       @id @default(autoincrement())
-  user        User      @relation(fields: [userId], references: [id])
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [userId], references: [id])
   userId      String
   items       MenuItem[]
   amount      Float
+  activeOrder Boolean     @default(true)
+  status      Int
 }
-
-// model MenuItemsOnOrder {
-//   menuItem  MenuItem @relation(fields: [items], references: [title])
-//   items     String[]
-//   order     Order    @relation(fields: [orders], references: [id])
-//   orders    Int
-//   createdAt   DateTime  @default(now())
-// }

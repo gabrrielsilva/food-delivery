@@ -88,28 +88,17 @@ export class AuthService {
         email: user.email,
         username: user.username,
         password: passwordHash,
-        address: user.address,
-        phoneNumber: user.phoneNumber,
-        profilePictureUrl: user.profilePictureUrl,
-      },
-    });
-
-    const getUserIdToCreateAddress = await this.prisma.user.findUnique({
-      where: { email: user.email },
-    });
-
-    await this.prisma.address.create({
-      data: {
-        street: address.street,
-        number: address.number,
-        district: address.district,
-        city: address.city,
-        state: address.state,
-        user: {
-          connect: {
-            id: getUserIdToCreateAddress.id,
+        address: {
+          create: {
+            street: address.street,
+            number: address.number,
+            district: address.district,
+            city: address.city,
+            state: address.state,
           },
         },
+        phoneNumber: user.phoneNumber,
+        profilePictureUrl: user.profilePictureUrl,
       },
     });
   }

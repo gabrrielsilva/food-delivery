@@ -24,6 +24,12 @@ export class MenuItemService {
     });
   }
 
+  async findMenuItemById(id: number): Promise<MenuItem | null> {
+    return this.prisma.menuItem.findUnique({
+      where: { id },
+    });
+  }
+
   async createMenuItem(data: Prisma.MenuItemCreateInput): Promise<void> {
     await this.prisma.menuItem.create({
       data,

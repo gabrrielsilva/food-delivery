@@ -1,11 +1,12 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -29,15 +30,7 @@ export class MenuItemController {
   async getMenuItemById(@Param('id') id: string): Promise<MenuItem | null> {
     const item = await this.menuItemService.findOneMenuItem({ id: Number(id) });
 
-    if (!item) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Item não encontrado',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    if (!item) new NotFoundException('Item não encontrado');
 
     return item;
   }
@@ -52,15 +45,8 @@ export class MenuItemController {
       },
     });
 
-    if (searchedItems.length === 0) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Item não encontrado',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    if (searchedItems.length === 0)
+      throw new NotFoundException('Item não encontrado');
 
     return searchedItems;
   }
@@ -72,15 +58,7 @@ export class MenuItemController {
       title: menuItemData.title,
     });
 
-    if (existingMenuItem) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          error: 'Item já existe',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
+    if (existingMenuItem) throw new ConflictException('Item já existe');
 
     this.menuItemService.createMenuItem(menuItemData);
   }
@@ -95,30 +73,14 @@ export class MenuItemController {
       id: Number(id),
     });
 
-    if (!existingMenuItem) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Item não encontrado',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    if (!existingMenuItem) throw new NotFoundException('Item não encontrado');
 
     if (menuItemData.title) {
       const existingMenuItemTitle = await this.menuItemService.findOneMenuItem({
         title: menuItemData.title,
       });
 
-      if (existingMenuItemTitle) {
-        throw new HttpException(
-          {
-            status: HttpStatus.CONFLICT,
-            error: 'Item já existe',
-          },
-          HttpStatus.CONFLICT,
-        );
-      }
+      if (existingMenuItemTitle) throw new ConflictException('Item já existe');
     }
 
     this.menuItemService.updateMenuItem({
