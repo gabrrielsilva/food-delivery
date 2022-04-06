@@ -8,18 +8,29 @@ datasource db {
 }
 
 model User {
-  id                String  @default(uuid()) @id
-  email             String  @unique
+  id                String    @id @default(uuid())
+  email             String    @unique
   username          String
   password          String
-  address           String
-  phoneNumber       Int     @unique
+  address           Address[]
+  phoneNumber       String    @unique
   profilePictureUrl String?
-  isAdmin           Boolean @default(false)
+  isAdmin           Boolean   @default(false)
+  Order             Order[]
+}
+
+model Address {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String  @id
+  street    String
+  number    Int
+  district  String
+  city      String
+  state     String  @db.VarChar(2)
 }
 
 model MenuItem {
-  id          Int       @default(autoincrement()) @id
+  id          Int       @id @default(autoincrement())
   title       String    @unique
   ingredients String?
   servesUpTo  Int?
@@ -28,4 +39,21 @@ model MenuItem {
   available   Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  Order       Order[]
 }
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  items       MenuItem[]
+  amount      Float
+}
+
+// model MenuItemsOnOrder {
+//   menuItem  MenuItem @relation(fields: [items], references: [title])
+//   items     String[]
+//   order     Order    @relation(fields: [orders], references: [id])
+//   orders    Int
+//   createdAt   DateTime  @default(now())
+// }

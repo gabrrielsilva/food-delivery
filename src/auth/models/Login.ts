@@ -1,4 +1,4 @@
 export interface Login {
-  emailOrPhoneNumber: string | number;
+  emailOrPhoneNumber: string;
   accountPassword: string;
 }

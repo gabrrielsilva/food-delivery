@@ -1,11 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
-import * as email from 'email-validator';
 import { PrismaService } from 'src/prisma.service';
-import * as phoneNumber from 'validate-phone-number-node-js';
+import { useValidationsBR } from 'validations-br';
 import { Login } from './models/login';
+import { Register } from './models/Register';
 
 @Injectable()
 export class AuthService {
@@ -14,29 +18,32 @@ export class AuthService {
   constructor(private jwtService: JwtService, private prisma: PrismaService) {}
 
   async login(loginCredentials: Login): Promise<{ access_token: string }> {
-    const emailOrPhoneNumber = loginCredentials.emailOrPhoneNumber;
-    const accountPassword = loginCredentials.accountPassword;
+    const { emailOrPhoneNumber } = loginCredentials;
+    const { accountPassword } = loginCredentials;
 
-    if (typeof emailOrPhoneNumber === 'string') {
+    const loginWithEmail = useValidationsBR('email', emailOrPhoneNumber);
+    const loginWithPhoneNumber = useValidationsBR('phone', emailOrPhoneNumber);
+
+    if (loginWithEmail) {
       this.user = await this.prisma.user.findUnique({
         where: { email: emailOrPhoneNumber },
       });
     }
 
-    if (typeof emailOrPhoneNumber === 'number') {
+    if (loginWithPhoneNumber) {
       this.user = await this.prisma.user.findUnique({
         where: { phoneNumber: emailOrPhoneNumber },
       });
     }
 
-    if (!this.user) this.invalidCredentials();
+    if (!this.user) throw new UnauthorizedException('Usuário não existe');
 
     const passwordCompare = await bcryptjs.compare(
       accountPassword,
       this.user.password,
     );
 
-    if (!passwordCompare) this.invalidCredentials();
+    if (!passwordCompare) throw new UnauthorizedException('Senha incorreta');
 
     const payload = { sub: this.user.id, email: this.user.email };
 
@@ -45,28 +52,33 @@ export class AuthService {
     };
   }
 
-  async register(user: Prisma.UserCreateInput): Promise<void> {
-    const emailIsValid = email.validate(user.email);
-    const phoneNumberIsValid = phoneNumber.validate(`+550${user.phoneNumber}`);
+  async register(registerCredentials: Register): Promise<void> {
+    const { user } = registerCredentials;
+    const { address } = registerCredentials;
 
-    if (!emailIsValid || !phoneNumberIsValid) this.invalidCredentials();
+    const emailIsValid = useValidationsBR('email', user.email);
+    const phoneNumberIsValid = useValidationsBR('phone', user.phoneNumber);
+    const ufIsValid = useValidationsBR('uf', address.state);
 
-    const existingEmail = await this.prisma.user.findUnique({
+    if (
+      !emailIsValid ||
+      !phoneNumberIsValid ||
+      !ufIsValid ||
+      typeof address.number !== 'number'
+    ) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+
+    const emailAlreadyExists = await this.prisma.user.findUnique({
       where: { email: user.email },
     });
 
-    const existingPhoneNumber = await this.prisma.user.findUnique({
+    const phoneNumberAlreadyExists = await this.prisma.user.findUnique({
       where: { phoneNumber: user.phoneNumber },
     });
 
-    if (existingEmail || existingPhoneNumber) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          error: 'Usuário já existe',
-        },
-        HttpStatus.CONFLICT,
-      );
+    if (emailAlreadyExists || phoneNumberAlreadyExists) {
+      throw new ConflictException('Usuário já existe');
     }
 
     const passwordHash = await bcryptjs.hash(user.password, 10);
@@ -77,19 +89,28 @@ export class AuthService {
         username: user.username,
         password: passwordHash,
         address: user.address,
-        phoneNumber: Number(user.phoneNumber),
+        phoneNumber: user.phoneNumber,
         profilePictureUrl: user.profilePictureUrl,
       },
     });
-  }
 
-  invalidCredentials() {
-    throw new HttpException(
-      {
-        status: HttpStatus.UNAUTHORIZED,
-        error: 'Credenciais inválidas',
+    const getUserIdToCreateAddress = await this.prisma.user.findUnique({
+      where: { email: user.email },
+    });
+
+    await this.prisma.address.create({
+      data: {
+        street: address.street,
+        number: address.number,
+        district: address.district,
+        city: address.city,
+        state: address.state,
+        user: {
+          connect: {
+            id: getUserIdToCreateAddress.id,
+          },
+        },
       },
-      HttpStatus.UNAUTHORIZED,
-    );
+    });
   }
 }

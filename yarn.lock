@@ -2079,11 +2079,6 @@ electron-to-chromium@^1.4.84:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.103.tgz#abfe376a4d70fa1e1b4b353b95df5d6dfd05da3a"
   integrity sha512-c/uKWR1Z/W30Wy/sx3dkZoj4BijbXX85QKWu9jJfjho3LBAXNEGAEW3oWiGb+dotA6C6BzCTxL2/aLes7jlUeg==
 
-email-validator@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/email-validator/-/email-validator-2.0.4.tgz#b8dfaa5d0dae28f1b03c95881d904d4e40bfe7ed"
-  integrity sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ==
-
 emittery@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/emittery/-/emittery-0.8.1.tgz#bb23cc86d03b30aa75a7f734819dee2e1ba70860"
@@ -5017,10 +5012,10 @@ v8-to-istanbul@^8.1.0:
     convert-source-map "^1.6.0"
     source-map "^0.7.3"
 
-validate-phone-number-node-js@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/validate-phone-number-node-js/-/validate-phone-number-node-js-0.0.1.tgz#88ce5f7ee2ad53a1f469052a73b2e2ded77ec634"
-  integrity sha512-A9yVgLOYLyLhGKPFOxGsar9jQK/Ti4TKvEUrklQ26KWRxcV6xw9EzBBD9dCX6S+SeczxCuQgO1u3I/ne2tABYw==
+validations-br@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/validations-br/-/validations-br-1.2.0.tgz#254c3a7982667cada8935e633c7a4168e1d98de1"
+  integrity sha512-BHoRZMH+GklOObdxnqatyo0JxpiKxzzRwLHOHAbSeBJ1REB5yBietcmyMK7pR7JwzWuLiU2CwTF/xpY7CmP7XQ==
 
 vary@^1, vary@~1.1.2:
   version "1.1.2"

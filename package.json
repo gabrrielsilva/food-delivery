@@ -26,14 +26,13 @@
     "@prisma/client": "^3.11.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
-    "email-validator": "^2.0.4",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "validate-phone-number-node-js": "^0.0.1"
+    "validations-br": "^1.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

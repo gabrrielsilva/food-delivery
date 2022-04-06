@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import * as dotenv from 'dotenv';
 import { PrismaService } from 'src/prisma.service';
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 
@@ -17,6 +18,7 @@ dotenv.config();
     }),
   ],
   exports: [AuthService],
+  controllers: [AuthController],
   providers: [AuthService, PrismaService, JwtStrategy],
 })
 export class AuthModule {}
