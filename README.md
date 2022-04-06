@@ -25,10 +25,10 @@
 - Calcular frete e tempo previsto de entrega;
 - Gerenciamento de sacola;
 - Escolher método e/ou fazer pagamento;
-- Realizar pedido;
+- Realizar pedido; ✔
 - Gerenciar cardápio; ✔
 - Gerenciar pedidos;
-- Exibir progresso do pedido.
+- Exibir progresso do pedido. ✔
 
 **Requisitos não funcionais**
 
