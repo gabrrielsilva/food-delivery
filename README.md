@@ -1,8 +1,8 @@
-# E-commerce Pizzas
+# Food delivery
 
 ## Requisitos do usuário
 
-**Pizzaria**
+**Restaurante**
 
 - Gerenciar cardápio
 - Gerenciar pedidos de clientes.
@@ -19,8 +19,8 @@
 
 **Requisitos funcionais:**
 
-- Autenticação de administrador ✔
-- Cadastro e autenticação de clientes, com validação através de e-mail ou conta Google;
+- Autenticação de administrador;
+- Cadastro e login de clientes; ✔
 - Exibir cardápio; ✔
 - Calcular frete e tempo previsto de entrega;
 - Gerenciamento de sacola;
@@ -42,5 +42,5 @@
 - Preço mínimo de X reais ou quantidade miníma de Y itens;
 - Realizar pedido apenas quando autenticado;
 - Raio de entrega de Z km;
-- Após cliente fazer pedido, pizzaria deve confirmar;
+- Após cliente fazer pedido, restaurante deve confirmar;
 - Métodos de pagamento: dinheiro, pix, cartão de crédito ou débito.
