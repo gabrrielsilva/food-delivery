@@ -27,7 +27,7 @@
 - Escolher método e/ou fazer pagamento;
 - Realizar pedido; ✔
 - Gerenciar cardápio; ✔
-- Gerenciar pedidos;
+- Gerenciar pedidos; ✔
 - Exibir progresso do pedido. ✔
 
 **Requisitos não funcionais**
