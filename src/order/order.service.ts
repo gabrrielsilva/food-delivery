@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Order, Prisma } from '@prisma/client';
+import { Order, Prisma, Status } from '@prisma/client';
 import { MenuItemService } from 'src/menu-item/menu-item.service';
 import { PrismaService } from 'src/prisma.service';
-import { OrderStatus } from './models/OrderStatus';
 
 @Injectable()
 export class OrderService {
@@ -11,7 +10,7 @@ export class OrderService {
     private menuItem: MenuItemService,
   ) {}
 
-  async findAllOrders(params: {
+  async getAllOrders(params: {
     where?: Prisma.OrderWhereInput;
   }): Promise<Order[] | null> {
     const { where } = params;
@@ -21,21 +20,18 @@ export class OrderService {
     });
   }
 
-  async findOneOrder(
-    orderWhereUniqueInput: Prisma.OrderWhereUniqueInput,
-  ): Promise<Order | null> {
+  async getOrderById(id: number): Promise<Order | null> {
     return this.prisma.order.findUnique({
-      where: orderWhereUniqueInput,
+      where: { id },
     });
   }
 
   async makeOrder(orderItems: number[], user: any): Promise<void> {
     const items: any[] = [];
     const amount = 0;
-    const defaultStatus: OrderStatus = 1; //EM_PREPARO
 
     for await (const itemId of orderItems['items']) {
-      const findItem = await this.menuItem.findMenuItemById(itemId);
+      const findItem = await this.menuItem.getMenuItemById(itemId);
       const formatArrayOfItemsToObjectWithKeyAndValueId = (id: number) => {
         // Prisma relation:
         // connect: [
@@ -65,29 +61,27 @@ export class OrderService {
         items: {
           connect: items,
         },
-        status: defaultStatus,
         amount,
       },
     });
   }
 
-  async updateOrderStatus(params: {
-    where: Prisma.OrderWhereUniqueInput;
-    data: OrderStatus;
-  }): Promise<void> {
-    const { where, data } = params;
-
+  async updateOrderStatus(id: number, status: Status): Promise<void> {
     await this.prisma.order.update({
-      where,
+      where: { id },
       data: {
-        status: data,
+        status: {
+          set: status,
+        },
       },
     });
   }
 
-  async deleteOrder(where: Prisma.OrderWhereUniqueInput): Promise<void> {
+  async deleteOrder(id: number): Promise<void> {
     await this.prisma.order.delete({
-      where,
+      where: {
+        id,
+      },
     });
   }
 }

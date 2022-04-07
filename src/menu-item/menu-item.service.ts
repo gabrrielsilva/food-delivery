@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma.service';
 export class MenuItemService {
   constructor(private prisma: PrismaService) {}
 
-  async findAllMenuItems(params: {
+  async getAllMenuItems(params: {
     where?: Prisma.MenuItemWhereInput;
   }): Promise<MenuItem[] | null> {
     const { where } = params;
@@ -16,17 +16,15 @@ export class MenuItemService {
     });
   }
 
-  async findOneMenuItem(
-    menuItemWhereUniqueInput: Prisma.MenuItemWhereUniqueInput,
-  ): Promise<MenuItem | null> {
+  async getMenuItemById(id: number): Promise<MenuItem | null> {
     return this.prisma.menuItem.findUnique({
-      where: menuItemWhereUniqueInput,
+      where: { id },
     });
   }
 
-  async findMenuItemById(id: number): Promise<MenuItem | null> {
+  async getMenuItemByTitle(title: string): Promise<MenuItem | null> {
     return this.prisma.menuItem.findUnique({
-      where: { id },
+      where: { title },
     });
   }
 
@@ -36,21 +34,19 @@ export class MenuItemService {
     });
   }
 
-  async updateMenuItem(params: {
-    where: Prisma.MenuItemWhereUniqueInput;
-    data: Prisma.MenuItemUpdateInput;
-  }): Promise<void> {
-    const { where, data } = params;
-
+  async updateMenuItem(
+    id: number,
+    data: Prisma.MenuItemUpdateInput,
+  ): Promise<void> {
     await this.prisma.menuItem.update({
-      where,
+      where: { id },
       data,
     });
   }
 
-  async deleteMenuItem(where: Prisma.MenuItemWhereUniqueInput): Promise<void> {
+  async deleteMenuItem(id: number): Promise<void> {
     await this.prisma.menuItem.delete({
-      where,
+      where: { id },
     });
   }
 }

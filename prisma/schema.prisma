@@ -49,5 +49,11 @@ model Order {
   items       MenuItem[]
   amount      Float
   activeOrder Boolean     @default(true)
-  status      Int
+  status      Status      @default(EM_PREPARO)
+}
+
+enum Status {
+  EM_PREPARO
+  A_CAMINHO
+  ENTREGUE
 }

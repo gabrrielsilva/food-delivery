@@ -21,14 +21,14 @@ export class MenuItemController {
 
   @Get('menu')
   async getMenu(): Promise<MenuItem[]> {
-    return this.menuItemService.findAllMenuItems({
+    return this.menuItemService.getAllMenuItems({
       where: { available: true },
     });
   }
 
   @Get('menu/:id')
   async getMenuItemById(@Param('id') id: string): Promise<MenuItem | null> {
-    const item = await this.menuItemService.findOneMenuItem({ id: Number(id) });
+    const item = await this.menuItemService.getMenuItemById(Number(id));
 
     if (!item) new NotFoundException('Item não encontrado');
 
@@ -39,7 +39,7 @@ export class MenuItemController {
   async searchMenuItems(
     @Query('search') searchString: string,
   ): Promise<MenuItem[] | null> {
-    const searchedItems = await this.menuItemService.findAllMenuItems({
+    const searchedItems = await this.menuItemService.getAllMenuItems({
       where: {
         title: { contains: searchString },
       },
@@ -54,9 +54,9 @@ export class MenuItemController {
   @Post('menu')
   @HttpCode(HttpStatus.CREATED)
   async createMenuItem(@Body() menuItemData: MenuItem): Promise<void> {
-    const existingMenuItem = await this.menuItemService.findOneMenuItem({
-      title: menuItemData.title,
-    });
+    const existingMenuItem = await this.menuItemService.getMenuItemByTitle(
+      menuItemData.title,
+    );
 
     if (existingMenuItem) throw new ConflictException('Item já existe');
 
@@ -69,29 +69,25 @@ export class MenuItemController {
     @Param('id') id: string,
     @Body() menuItemData: MenuItem,
   ): Promise<void> {
-    const existingMenuItem = await this.menuItemService.findOneMenuItem({
-      id: Number(id),
-    });
+    const existingMenuItem = await this.menuItemService.getMenuItemById(
+      Number(id),
+    );
 
     if (!existingMenuItem) throw new NotFoundException('Item não encontrado');
 
     if (menuItemData.title) {
-      const existingMenuItemTitle = await this.menuItemService.findOneMenuItem({
-        title: menuItemData.title,
-      });
+      const existingMenuItemTitle =
+        await this.menuItemService.getMenuItemByTitle(menuItemData.title);
 
       if (existingMenuItemTitle) throw new ConflictException('Item já existe');
     }
 
-    this.menuItemService.updateMenuItem({
-      where: { id: Number(id) },
-      data: menuItemData,
-    });
+    this.menuItemService.updateMenuItem(Number(id), menuItemData);
   }
 
   @Delete('menu/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeMenuItem(@Param('id') id: string): Promise<void> {
-    this.menuItemService.deleteMenuItem({ id: Number(id) });
+    this.menuItemService.deleteMenuItem(Number(id));
   }
 }
