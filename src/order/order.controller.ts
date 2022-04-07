@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -21,7 +22,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
-  async getAllOrders(): Promise<Order[]> {
+  async getAllOrders(): Promise<Order[] | null> {
     return this.orderService.getAllOrders({
       where: { activeOrder: true },
     });
@@ -31,7 +32,7 @@ export class OrderController {
   async getOrderById(@Param('id') id: string): Promise<Order | null> {
     const order = await this.orderService.getOrderById(Number(id));
 
-    if (!order) new NotFoundException('Pedido não encontrado');
+    if (!order) throw new NotFoundException('Pedido não encontrado');
 
     return order;
   }
@@ -42,8 +43,23 @@ export class OrderController {
   async makeOrder(
     @Body() orderItems: number[],
     @AuthUser() user: any,
-  ): Promise<void> {
-    this.orderService.makeOrder(orderItems, user);
+  ): Promise<{ items: any[]; amount: number }> {
+    const MINIMUM_ORDER_PRICE = 25;
+
+    const orderDetails = await this.orderService.makeOrder(
+      orderItems,
+      user,
+      MINIMUM_ORDER_PRICE,
+    );
+    const { items, amount } = orderDetails;
+
+    if (amount < MINIMUM_ORDER_PRICE) {
+      throw new ConflictException(
+        `O valor mínimo do pedido é de R$${MINIMUM_ORDER_PRICE},00`,
+      );
+    }
+
+    return { items, amount };
   }
 
   @Patch(':id')

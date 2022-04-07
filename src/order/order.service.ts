@@ -26,12 +26,17 @@ export class OrderService {
     });
   }
 
-  async makeOrder(orderItems: number[], user: any): Promise<void> {
+  async makeOrder(
+    orderItems: number[],
+    user: any,
+    mininumOrderPrice: number,
+  ): Promise<{ items: any[]; amount: number }> {
     const items: any[] = [];
-    const amount = 0;
+    let amount = 0;
 
     for await (const itemId of orderItems['items']) {
       const findItem = await this.menuItem.getMenuItemById(itemId);
+
       const formatArrayOfItemsToObjectWithKeyAndValueId = (id: number) => {
         // Prisma relation:
         // connect: [
@@ -48,8 +53,11 @@ export class OrderService {
 
       const item = formatArrayOfItemsToObjectWithKeyAndValueId(findItem.id);
 
+      amount += findItem.price;
       items.push(item);
     }
+
+    if (amount < mininumOrderPrice) return { items, amount };
 
     await this.prisma.order.create({
       data: {
@@ -64,6 +72,8 @@ export class OrderService {
         amount,
       },
     });
+
+    return { items, amount };
   }
 
   async updateOrderStatus(id: number, status: Status): Promise<void> {

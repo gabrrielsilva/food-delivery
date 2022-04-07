@@ -30,7 +30,7 @@ export class MenuItemController {
   async getMenuItemById(@Param('id') id: string): Promise<MenuItem | null> {
     const item = await this.menuItemService.getMenuItemById(Number(id));
 
-    if (!item) new NotFoundException('Item não encontrado');
+    if (!item) throw new NotFoundException('Item não encontrado');
 
     return item;
   }
