@@ -45,7 +45,11 @@ export class AuthService {
 
     if (!passwordCompare) throw new UnauthorizedException('Senha incorreta');
 
-    const payload = { sub: this.user.id, email: this.user.email };
+    const payload = {
+      sub: this.user.id,
+      email: this.user.email,
+      admin: this.user.isAdmin,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),

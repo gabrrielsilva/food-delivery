@@ -11,8 +11,12 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MenuItem } from '@prisma/client';
+import { Role } from 'src/auth/admin/admin.decorator';
+import { AdminGuard } from 'src/auth/admin/admin.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { MenuItemService } from './menu-item.service';
 
 @Controller()
@@ -52,6 +56,8 @@ export class MenuItemController {
   }
 
   @Post('menu')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(HttpStatus.CREATED)
   async createMenuItem(@Body() menuItemData: MenuItem): Promise<void> {
     const existingMenuItem = await this.menuItemService.getMenuItemByTitle(
@@ -64,6 +70,8 @@ export class MenuItemController {
   }
 
   @Patch('menu/:id')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateMenuItem(
     @Param('id') id: string,
@@ -86,6 +94,8 @@ export class MenuItemController {
   }
 
   @Delete('menu/:id')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeMenuItem(@Param('id') id: string): Promise<void> {
     this.menuItemService.deleteMenuItem(Number(id));

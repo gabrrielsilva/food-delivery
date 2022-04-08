@@ -17,22 +17,61 @@ export class OrderService {
 
     return this.prisma.order.findMany({
       where,
+      include: {
+        items: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        user: {
+          select: {
+            username: true,
+            address: {
+              select: {
+                street: true,
+                number: true,
+                district: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
   async getOrderById(id: number): Promise<Order | null> {
     return this.prisma.order.findUnique({
       where: { id },
+      include: {
+        items: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        user: {
+          select: {
+            username: true,
+            address: {
+              select: {
+                street: true,
+                number: true,
+                district: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
-  async makeOrder(
-    orderItems: number[],
-    user: any,
-    mininumOrderPrice: number,
-  ): Promise<{ items: any[]; amount: number }> {
+  async makeOrder(orderItems: number[], user: any): Promise<number | void> {
+    const MINIMUM_ORDER_PRICE = 25;
     const items: any[] = [];
     let amount = 0;
+
+    console.log(user);
 
     for await (const itemId of orderItems['items']) {
       const findItem = await this.menuItem.getMenuItemById(itemId);
@@ -57,7 +96,7 @@ export class OrderService {
       items.push(item);
     }
 
-    if (amount < mininumOrderPrice) return { items, amount };
+    if (amount < MINIMUM_ORDER_PRICE) return amount;
 
     await this.prisma.order.create({
       data: {
@@ -72,8 +111,6 @@ export class OrderService {
         amount,
       },
     });
-
-    return { items, amount };
   }
 
   async updateOrderStatus(id: number, status: Status): Promise<void> {

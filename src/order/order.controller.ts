@@ -13,6 +13,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Order, Status } from '@prisma/client';
+import { Role } from 'src/auth/admin/admin.decorator';
+import { AdminGuard } from 'src/auth/admin/admin.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthUser } from './current-user';
 import { OrderService } from './order.service';
@@ -22,6 +24,8 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async getAllOrders(): Promise<Order[] | null> {
     return this.orderService.getAllOrders({
       where: { activeOrder: true },
@@ -29,6 +33,8 @@ export class OrderController {
   }
 
   @Get(':id')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async getOrderById(@Param('id') id: string): Promise<Order | null> {
     const order = await this.orderService.getOrderById(Number(id));
 
@@ -43,26 +49,20 @@ export class OrderController {
   async makeOrder(
     @Body() orderItems: number[],
     @AuthUser() user: any,
-  ): Promise<{ items: any[]; amount: number }> {
-    const MINIMUM_ORDER_PRICE = 25;
-
-    const orderDetails = await this.orderService.makeOrder(
+  ): Promise<void> {
+    const minimumOrderPriceNotReached = await this.orderService.makeOrder(
       orderItems,
       user,
-      MINIMUM_ORDER_PRICE,
     );
-    const { items, amount } = orderDetails;
 
-    if (amount < MINIMUM_ORDER_PRICE) {
-      throw new ConflictException(
-        `O valor mínimo do pedido é de R$${MINIMUM_ORDER_PRICE},00`,
-      );
+    if (minimumOrderPriceNotReached) {
+      throw new ConflictException(`O valor mínimo do pedido não foi atingido`);
     }
-
-    return { items, amount };
   }
 
   @Patch(':id')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateOrderStatus(
     @Param('id') id: string,
@@ -76,6 +76,8 @@ export class OrderController {
   }
 
   @Delete(':id')
+  @Role('admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOrder(@Param('id') id: string): Promise<void> {
     this.orderService.deleteOrder(Number(id));

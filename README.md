@@ -11,7 +11,6 @@
 
 - Visualizar cardápio
 - Simular frete e previsão de entrega
-- Gerenciar itens da sacola
 - Realizar pagamento e fazer pedido
 - Monitorar andamento do pedido.
 
@@ -19,11 +18,10 @@
 
 **Requisitos funcionais:**
 
-- Autenticação de administrador;
+- Autenticação de administrador; ✔
 - Cadastro e login de clientes; ✔
 - Exibir cardápio; ✔
 - Calcular frete e tempo previsto de entrega;
-- Gerenciamento de sacola;
 - Escolher método e/ou fazer pagamento;
 - Realizar pedido; ✔
 - Gerenciar cardápio; ✔
