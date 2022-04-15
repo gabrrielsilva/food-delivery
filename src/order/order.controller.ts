@@ -4,8 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   NotFoundException,
   Param,
   Patch,
@@ -44,7 +42,6 @@ export class OrderController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
   async makeOrder(
     @Body() orderItems: number[],
@@ -63,7 +60,6 @@ export class OrderController {
   @Patch(':id')
   @Role('admin')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   async updateOrderStatus(
     @Param('id') id: string,
     @Body() status: Status,
@@ -78,7 +74,6 @@ export class OrderController {
   @Delete(':id')
   @Role('admin')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOrder(@Param('id') id: string): Promise<void> {
     this.orderService.deleteOrder(Number(id));
   }

@@ -4,8 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   NotFoundException,
   Param,
   Patch,
@@ -58,7 +56,6 @@ export class MenuItemController {
   @Post('menu')
   @Role('admin')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @HttpCode(HttpStatus.CREATED)
   async createMenuItem(@Body() menuItemData: MenuItem): Promise<void> {
     const existingMenuItem = await this.menuItemService.getMenuItemByTitle(
       menuItemData.title,
@@ -72,7 +69,6 @@ export class MenuItemController {
   @Patch('menu/:id')
   @Role('admin')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   async updateMenuItem(
     @Param('id') id: string,
     @Body() menuItemData: MenuItem,
@@ -96,7 +92,6 @@ export class MenuItemController {
   @Delete('menu/:id')
   @Role('admin')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   async removeMenuItem(@Param('id') id: string): Promise<void> {
     this.menuItemService.deleteMenuItem(Number(id));
   }

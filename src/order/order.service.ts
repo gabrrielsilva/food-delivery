@@ -1,7 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Order, Prisma, Status } from '@prisma/client';
+import * as dotenv from 'dotenv';
 import { MenuItemService } from 'src/menu-item/menu-item.service';
 import { PrismaService } from 'src/prisma.service';
+import Stripe from 'stripe';
+
+dotenv.config();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2020-08-27',
+  typescript: true,
+});
 
 @Injectable()
 export class OrderService {
@@ -71,10 +80,18 @@ export class OrderService {
     const items: any[] = [];
     let amount = 0;
 
-    console.log(user);
+    const customerParams: Stripe.CustomerCreateParams = {
+      name: user.username,
+      email: user.email,
+    };
+
+    await stripe.customers.create(customerParams);
 
     for await (const itemId of orderItems['items']) {
       const findItem = await this.menuItem.getMenuItemById(itemId);
+
+      if (!findItem)
+        throw new NotFoundException(`Item nº${itemId} não existe no cardápio`);
 
       const formatArrayOfItemsToObjectWithKeyAndValueId = (id: number) => {
         // Prisma relation:
